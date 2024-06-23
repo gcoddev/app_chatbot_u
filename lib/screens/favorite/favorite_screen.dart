@@ -1,11 +1,43 @@
+import 'package:chatbot_u/models/Document.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:chatbot_u/components/product_card.dart';
 import 'package:chatbot_u/models/Product.dart';
 
 import '../details/details_screen.dart';
 
-class FavoriteScreen extends StatelessWidget {
-  const FavoriteScreen({super.key});
+class FavoriteScreen extends StatefulWidget {
+  const FavoriteScreen({Key? key}) : super(key: key);
+
+  @override
+  _FavoriteScreenState createState() => _FavoriteScreenState();
+}
+
+class _FavoriteScreenState extends State<FavoriteScreen> {
+  List<Document> documents = [];
+  List<Product> demoProducts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
+    final url =
+        'http://192.168.0.10:3001/api/documentosAll'; // Cambia la URL por la correcta
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonData = jsonDecode(response.body);
+      setState(() {
+        documents = jsonData.map((data) => Document.fromJson(data)).toList();
+      });
+    } else {
+      throw Exception('Failed to load documents');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +52,7 @@ class FavoriteScreen extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: GridView.builder(
-                itemCount: demoProducts.length,
+                itemCount: documents.length,
                 gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                   maxCrossAxisExtent: 200,
                   childAspectRatio: 0.7,
@@ -28,12 +60,12 @@ class FavoriteScreen extends StatelessWidget {
                   crossAxisSpacing: 16,
                 ),
                 itemBuilder: (context, index) => ProductCard(
-                  product: demoProducts[index],
+                  document: documents[index],
                   onPress: () => Navigator.pushNamed(
                     context,
                     DetailsScreen.routeName,
-                    arguments:
-                        ProductDetailsArguments(product: demoProducts[index]),
+                    arguments: null
+                        // ProductDetailsArguments(document: documents[index]),
                   ),
                 ),
               ),

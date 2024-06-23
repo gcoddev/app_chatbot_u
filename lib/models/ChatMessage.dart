@@ -28,5 +28,11 @@ List demeChatMessages = [
     messageType: ChatMessageType.text,
     messageStatus: MessageStatus.viewed,
     isSender: true,
-  )
+  ),
+  ChatMessage(
+    text: "...",
+    messageType: ChatMessageType.text,
+    messageStatus: MessageStatus.viewed,
+    isSender: false,
+  ),
 ];

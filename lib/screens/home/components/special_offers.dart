@@ -1,12 +1,44 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:chatbot_u/screens/products/products_screen.dart';
-
+// import 'package:chatbot_u/screens/products/products_screen.dart';
 import 'section_title.dart';
+import 'package:chatbot_u/models/Video.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class SpecialOffers extends StatelessWidget {
+class SpecialOffers extends StatefulWidget {
   const SpecialOffers({
     Key? key,
   }) : super(key: key);
+
+  @override
+  _SpecialOffersState createState() => _SpecialOffersState();
+}
+
+class _SpecialOffersState extends State<SpecialOffers> {
+  late List<Video> videos = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // Llama al método para obtener los videos al iniciar el widget
+    fetchVideos();
+  }
+
+  Future<void> fetchVideos() async {
+    final response =
+        await http.get(Uri.parse('http://192.168.0.10:3001/api/videosAll'));
+    if (response.statusCode == 200) {
+      final List<dynamic> responseData = json.decode(response.body);
+      final List<Video> dataVideos =
+          responseData.map((data) => Video.fromJson(data)).toList();
+      setState(() {
+        videos = dataVideos;
+      });
+    } else {
+      throw Exception('Failed to load videos');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,33 +54,15 @@ class SpecialOffers extends StatelessWidget {
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            children: [
-              SpecialOfferCard(
-                image: "assets/images/Image Banner 2.png",
-                category: "Smartphone",
-                numOfBrands: 1,
+            children: videos.map((video) {
+              return SpecialOfferCard(
+                video: video,
                 press: () {
-                  Navigator.pushNamed(context, ProductsScreen.routeName);
+                  // Navigator.pushNamed(context, ProductsScreen.routeName);
+                  launch(video.url);
                 },
-              ),
-              SpecialOfferCard(
-                image: "assets/images/Image Banner 3.png",
-                category: "Fashion",
-                numOfBrands: 24,
-                press: () {
-                  Navigator.pushNamed(context, ProductsScreen.routeName);
-                },
-              ),
-              SpecialOfferCard(
-                image: "assets/images/Image Banner 2.png",
-                category: "Smartphone",
-                numOfBrands: 1,
-                press: () {
-                  Navigator.pushNamed(context, ProductsScreen.routeName);
-                },
-              ),
-              const SizedBox(width: 20),
-            ],
+              );
+            }).toList(),
           ),
         ),
       ],
@@ -59,15 +73,27 @@ class SpecialOffers extends StatelessWidget {
 class SpecialOfferCard extends StatelessWidget {
   const SpecialOfferCard({
     Key? key,
-    required this.category,
-    required this.image,
-    required this.numOfBrands,
+    required this.video,
     required this.press,
   }) : super(key: key);
 
-  final String category, image;
-  final int numOfBrands;
+  final Video video;
   final GestureTapCallback press;
+
+  String obtenerCodigoVideo(String url) {
+    if (url.contains('v=')) {
+      List<String> partes = url.split('v=');
+      if (partes.length >= 2) {
+        String codigo = partes[1];
+        if (codigo.contains('&')) {
+          return codigo.split('&')[0];
+        } else {
+          return codigo;
+        }
+      }
+    }
+    return '';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,14 +102,14 @@ class SpecialOfferCard extends StatelessWidget {
       child: GestureDetector(
         onTap: press,
         child: SizedBox(
-          width: 200,
+          width: 135,
           height: 100,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: Stack(
               children: [
-                Image.asset(
-                  image,
+                Image.network(
+                  'https://img.youtube.com/vi/${obtenerCodigoVideo(video.url)}/0.jpg',
                   fit: BoxFit.cover,
                 ),
                 Container(
@@ -110,15 +136,12 @@ class SpecialOfferCard extends StatelessWidget {
                       style: const TextStyle(color: Colors.white),
                       children: [
                         TextSpan(
-                          text: "$category\n",
+                          text: "${video.titulo}\n",
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        TextSpan(
-                            text: "$numOfBrands Brands",
-                            style: const TextStyle(fontSize: 12.0))
                       ],
                     ),
                   ),

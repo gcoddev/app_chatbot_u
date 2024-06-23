@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants.dart';
 import '../sign_in/sign_in_screen.dart';
+import 'package:chatbot_u/screens/init_screen.dart';
 import 'components/splash_content.dart';
 
 class SplashScreen extends StatefulWidget {
   static String routeName = "/splash";
 
-  const SplashScreen({super.key});
+  const SplashScreen({Key? key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -16,13 +17,9 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   int currentPage = 0;
   List<Map<String, String>> splashData = [
+    {"text": "Mensajería con IA", "image": "assets/images/splash_1.png"},
     {
-      "text": "Mensajeria con IA",
-      "image": "assets/images/splash_1.png"
-    },
-    {
-      "text":
-          "Conversaciones con documentos\npara tesis y proyectos",
+      "text": "Conversaciones con documentos\npara tesis y proyectos",
       "image": "assets/images/splash_2.png"
     },
     {
@@ -30,6 +27,21 @@ class _SplashScreenState extends State<SplashScreen> {
       "image": "assets/images/splash_3.png"
     },
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    checkUserLoggedIn();
+  }
+
+  Future<void> checkUserLoggedIn() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isLoggedIn = prefs.containsKey('userData');
+    if (isLoggedIn) {
+      Navigator.pushReplacementNamed(context, InitScreen.routeName);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,8 +60,8 @@ class _SplashScreenState extends State<SplashScreen> {
                   },
                   itemCount: splashData.length,
                   itemBuilder: (context, index) => SplashContent(
-                    image: splashData[index]["image"],
-                    text: splashData[index]['text'],
+                    image: splashData[index]["image"]!,
+                    text: splashData[index]['text']!,
                   ),
                 ),
               ),
@@ -81,7 +93,10 @@ class _SplashScreenState extends State<SplashScreen> {
                       const Spacer(flex: 3),
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.pushNamed(context, SignInScreen.routeName);
+                          Navigator.pushNamed(
+                            context,
+                            SignInScreen.routeName,
+                          );
                         },
                         child: const Text("Continuar"),
                       ),

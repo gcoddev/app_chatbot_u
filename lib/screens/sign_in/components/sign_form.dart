@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
-
-// import '../../../components/custom_surfix_icon.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../components/form_error.dart';
 import '../../../constants.dart';
 import '../../../helper/keyboard.dart';
 import '../../forgot_password/forgot_password_screen.dart';
 import '../../login_success/login_success_screen.dart';
 
-// Iniciar sesion
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
-
 class SignForm extends StatefulWidget {
-  const SignForm({super.key});
+  const SignForm({Key? key});
 
   @override
   _SignFormState createState() => _SignFormState();
@@ -23,8 +19,6 @@ class _SignFormState extends State<SignForm> {
   final _formKey = GlobalKey<FormState>();
   String? username;
   String? password;
-  bool? remember = false;
-  String? res;
   final List<String?> errors = [];
 
   void addError({String? error}) {
@@ -43,12 +37,12 @@ class _SignFormState extends State<SignForm> {
     }
   }
 
-  Future<String> loginApp(String username, String password) async {
-    final String apiUrl = "http://127.0.0.1:3001/api/loginApp";
+  Future<void> loginApp(String username, String password) async {
+    var apiUrl = Uri.http("192.168.0.10:3001", "/api/loginApp");
 
     try {
       final response = await http.post(
-        Uri.parse(apiUrl),
+        apiUrl,
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -58,19 +52,26 @@ class _SignFormState extends State<SignForm> {
         }),
       );
 
+      final Map<String, dynamic> responseData = jsonDecode(response.body);
       if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData = jsonDecode(response.body);
-
-        // Guarda los datos del usuario usando SharedPreferences
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('userData', jsonEncode(responseData));
 
-        return "Inicio de sesión exitoso: ${responseData}";
+        Navigator.pushNamed(context, LoginSuccessScreen.routeName);
+      } else if (response.statusCode == 400 || response.statusCode == 401) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(responseData['message'])),
+        );
       } else {
-        return "Error en el inicio de sesión: ${response.statusCode}";
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error en el inicio de sesión")),
+        );
       }
     } catch (e) {
-      return "Error en la petición: $e";
+      print("Error en la petición: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error en la conexión")),
+      );
     }
   }
 
@@ -81,7 +82,6 @@ class _SignFormState extends State<SignForm> {
       child: Column(
         children: [
           TextFormField(
-            // keyboardType: TextInputType.emailAddress,
             onSaved: (newValue) => username = newValue,
             onChanged: (value) {
               if (value.isNotEmpty) {
@@ -89,7 +89,6 @@ class _SignFormState extends State<SignForm> {
               } else if (emailValidatorRegExp.hasMatch(value)) {
                 removeError(error: kInvalidEmailError);
               }
-              return;
             },
             validator: (value) {
               if (value!.isEmpty) {
@@ -102,14 +101,11 @@ class _SignFormState extends State<SignForm> {
               return null;
             },
             decoration: const InputDecoration(
-                labelText: "Usuario",
-                hintText: "Ingrese su nombre de usuario",
-                // If  you are using latest version of flutter then lable text and hint text shown like this
-                // if you r using flutter less then 1.20.* then maybe this is not working properly
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-                suffixIcon: Icon(Icons
-                    .person) // CustomSurffixIcon(svgIcon: "assets/icons/Mail.svg"),
-                ),
+              labelText: "Usuario",
+              hintText: "Ingrese su nombre de usuario",
+              floatingLabelBehavior: FloatingLabelBehavior.always,
+              suffixIcon: Icon(Icons.person),
+            ),
           ),
           const SizedBox(height: 20),
           TextFormField(
@@ -121,7 +117,6 @@ class _SignFormState extends State<SignForm> {
               } else if (value.length >= 8) {
                 removeError(error: kShortPassError);
               }
-              return;
             },
             validator: (value) {
               if (value!.isEmpty) {
@@ -134,32 +129,21 @@ class _SignFormState extends State<SignForm> {
               return null;
             },
             decoration: const InputDecoration(
-                labelText: "Contraseña",
-                hintText: "Ingrese su contraseña",
-                // If  you are using latest version of flutter then lable text and hint text shown like this
-                // if you r using flutter less then 1.20.* then maybe this is not working properly
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-                suffixIcon: Icon(Icons
-                    .lock) //CustomSurffixIcon(svgIcon: "assets/icons/Lock.svg"),
-                ),
+              labelText: "Contraseña",
+              hintText: "Ingrese su contraseña",
+              floatingLabelBehavior: FloatingLabelBehavior.always,
+              suffixIcon: Icon(Icons.lock),
+            ),
           ),
           const SizedBox(height: 20),
           Row(
             children: [
-              // Checkbox(
-              //   value: remember,
-              //   activeColor: kPrimaryColor,
-              //   onChanged: (value) {
-              //     setState(() {
-              //       remember = value;
-              //     });
-              //   },
-              // ),
-              // const Text("Remember me"),
               const Spacer(),
               GestureDetector(
                 onTap: () => Navigator.pushNamed(
-                    context, ForgotPasswordScreen.routeName),
+                  context,
+                  ForgotPasswordScreen.routeName,
+                ),
                 child: const Text(
                   "Olvidaste tu contraseña?",
                   style: TextStyle(decoration: TextDecoration.underline),
@@ -174,18 +158,7 @@ class _SignFormState extends State<SignForm> {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
                 KeyboardUtil.hideKeyboard(context);
-
                 await loginApp(username!, password!);
-
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                if (prefs.getString('userData') != null) {
-                  Navigator.pushNamed(context, LoginSuccessScreen.routeName);
-                } else {
-                  // Mostrar un mensaje de error o mantener al usuario en la pantalla de inicio de sesión
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Error en el inicio de sesión')),
-                  );
-                }
               }
             },
             child: const Text("Iniciar sesión"),

@@ -1,45 +1,76 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-
+import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../constants.dart';
-import '../models/Product.dart';
+import '../models/Document.dart';
 
 class ProductCard extends StatelessWidget {
   const ProductCard({
     Key? key,
     this.width = 140,
-    this.aspectRetio = 1.02,
-    required this.product,
+    this.aspectRatio = 1.02,
+    required this.document,
     required this.onPress,
   }) : super(key: key);
 
-  final double width, aspectRetio;
-  final Product product;
+  final double width, aspectRatio;
+  final Document document;
   final VoidCallback onPress;
+
+  Future<void> _downloadPDF(String pdfUrl) async {
+    final status = await Permission.storage.request();
+    try {
+      if (status.isGranted) {
+        // ignore: unused_local_variable
+        final taskId = await FlutterDownloader.enqueue(
+            url: pdfUrl,
+            savedDir: '/storage/emulated/0/Download/',
+            fileName: '${document.titulo}.pdf',
+            showNotification: true,
+            openFileFromNotification: true);
+      } else {
+        print("Not permission to download");
+      }
+    } catch (e) {
+      print("Error: ${e}");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: width,
       child: GestureDetector(
-        onTap: onPress,
+        onTap: () {
+          _downloadPDF(
+              'http://192.168.0.10:3001/documentos/${document.documento}');
+        },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             AspectRatio(
-              aspectRatio: 1.02,
+              aspectRatio: aspectRatio,
               child: Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: kSecondaryColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Image.asset(product.images[0]),
+                child: PDF(
+                  swipeHorizontal: false, // Permitir desplazamiento vertical
+                ).cachedFromUrl(
+                  'http://192.168.0.10:3001/documentos/${document.documento}',
+                  placeholder: (progress) =>
+                      Center(child: CircularProgressIndicator(value: progress)),
+                  errorWidget: (error) =>
+                      Center(child: Text('Error loading PDF')),
+                ),
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              product.title,
+              document.titulo,
               style: Theme.of(context).textTheme.bodyMedium,
               maxLines: 2,
             ),
@@ -47,38 +78,15 @@ class ProductCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "\$${product.price}",
+                  document.estado == '1' ? 'Activo' : 'Inactivo',
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: kPrimaryColor,
                   ),
                 ),
-                InkWell(
-                  borderRadius: BorderRadius.circular(50),
-                  onTap: () {},
-                  child: Container(
-                    padding: const EdgeInsets.all(6),
-                    height: 24,
-                    width: 24,
-                    decoration: BoxDecoration(
-                      color: product.isFavourite
-                          ? kPrimaryColor.withOpacity(0.15)
-                          : kSecondaryColor.withOpacity(0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: SvgPicture.asset(
-                      "assets/icons/Heart Icon_2.svg",
-                      colorFilter: ColorFilter.mode(
-                          product.isFavourite
-                              ? const Color(0xFFFF4848)
-                              : const Color(0xFFDBDEE4),
-                          BlendMode.srcIn),
-                    ),
-                  ),
-                ),
               ],
-            )
+            ),
           ],
         ),
       ),

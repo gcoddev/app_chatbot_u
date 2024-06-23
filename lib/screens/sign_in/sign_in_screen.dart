@@ -1,18 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../components/no_account_text.dart';
 // import '../../components/socal_card.dart';
 import 'components/sign_form.dart';
+import 'package:chatbot_u/screens/init_screen.dart';
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      routes: {
+        SignInScreen.routeName: (context) => SignInScreen(),
+        InitScreen.routeName: (context) => InitScreen(),
+      },
+      home: SignInScreen(),
+    );
+  }
+}
 
 class SignInScreen extends StatelessWidget {
   static String routeName = "/sign_in";
 
-  const SignInScreen({super.key});
+  const SignInScreen({Key? key});
+
   @override
   Widget build(BuildContext context) {
+    // Llama al método para verificar el usuario al inicio
+    verifyUser(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Iniciar sesion"),
+        title: const Text("Iniciar sesión"),
+        automaticallyImplyLeading: false,
       ),
       body: const SafeArea(
         child: SizedBox(
@@ -38,23 +58,6 @@ class SignInScreen extends StatelessWidget {
                   SizedBox(height: 16),
                   SignForm(),
                   SizedBox(height: 16),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.center,
-                  //   children: [
-                  //     SocalCard(
-                  //       icon: "assets/icons/google-icon.svg",
-                  //       press: () {},
-                  //     ),
-                  //     SocalCard(
-                  //       icon: "assets/icons/facebook-2.svg",
-                  //       press: () {},
-                  //     ),
-                  //     SocalCard(
-                  //       icon: "assets/icons/twitter.svg",
-                  //       press: () {},
-                  //     ),
-                  //   ],
-                  // ),
                   SizedBox(height: 20),
                   NoAccountText(),
                 ],
@@ -64,5 +67,14 @@ class SignInScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void verifyUser(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isLoggedIn = prefs.containsKey('userData');
+
+    if (isLoggedIn) {
+      Navigator.pushReplacementNamed(context, InitScreen.routeName);
+    }
   }
 }

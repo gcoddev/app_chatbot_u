@@ -20,7 +20,7 @@ class SearchField extends StatelessWidget {
           border: searchOutlineInputBorder,
           focusedBorder: searchOutlineInputBorder,
           enabledBorder: searchOutlineInputBorder,
-          hintText: "Buscar documentos",
+          hintText: "Buscar",
           prefixIcon: const Icon(Icons.search),
         ),
       ),
