@@ -31,8 +31,12 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
 
     if (response.statusCode == 200) {
       final List<dynamic> jsonData = jsonDecode(response.body);
+      final List<Document> dataDocs =
+          jsonData.map((data) => Document.fromJson(data)).toList();
+      final List<Document> filteredDocs =
+          dataDocs.where((doc) => doc.estado == '1').toList();
       setState(() {
-        documents = jsonData.map((data) => Document.fromJson(data)).toList();
+        documents = filteredDocs;
       });
     } else {
       throw Exception('Failed to load documents');
@@ -62,11 +66,10 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                 itemBuilder: (context, index) => ProductCard(
                   document: documents[index],
                   onPress: () => Navigator.pushNamed(
-                    context,
-                    DetailsScreen.routeName,
-                    arguments: null
-                        // ProductDetailsArguments(document: documents[index]),
-                  ),
+                      context, DetailsScreen.routeName,
+                      arguments: null
+                      // ProductDetailsArguments(document: documents[index]),
+                      ),
                 ),
               ),
             ),

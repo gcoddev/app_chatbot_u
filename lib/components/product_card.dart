@@ -58,7 +58,7 @@ class ProductCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: PDF(
-                  swipeHorizontal: false, // Permitir desplazamiento vertical
+                  swipeHorizontal: false,
                 ).cachedFromUrl(
                   'http://192.168.0.10:3001/documentos/${document.documento}',
                   placeholder: (progress) =>
@@ -71,16 +71,17 @@ class ProductCard extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               document.titulo,
-              style: Theme.of(context).textTheme.bodyMedium,
-              maxLines: 2,
+              style: TextStyle(fontSize: 12.0),
+              maxLines: 3,
+              softWrap: true,
             ),
-            Row(
+            const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  document.estado == '1' ? 'Activo' : 'Inactivo',
+                  'Descargar',
                   style: const TextStyle(
-                    fontSize: 14,
+                    fontSize: 10,
                     fontWeight: FontWeight.w600,
                     color: kPrimaryColor,
                   ),

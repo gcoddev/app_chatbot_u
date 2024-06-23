@@ -33,8 +33,10 @@ class _PopularProductsState extends State<PopularProducts> {
       final List<dynamic> responseData = json.decode(response.body);
       final List<Blog> dataBlogs =
           responseData.map((data) => Blog.fromJson(data)).toList();
+      final List<Blog> filteredBlogs =
+          dataBlogs.where((blog) => blog.estado == '1').toList();
       setState(() {
-        blogs = dataBlogs;
+        blogs = filteredBlogs;
       });
     } else {
       throw Exception('Failed to load blogs');

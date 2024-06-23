@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 // import '../../../constants.dart';
 import '../../../models/Blog.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 class ProductDescription extends StatelessWidget {
   const ProductDescription({
@@ -60,15 +61,13 @@ class ProductDescription extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(
-            left: 20,
-            right: 64,
-          ),
-          child: Text(
-            blog.contenido,
-            // maxLines: 3,
-          ),
-        ),
+            padding: const EdgeInsets.only(
+              left: 20,
+              right: 64,
+            ),
+            child: Html(
+              data: blog.contenido,
+            )),
         // Padding(
         //   padding: const EdgeInsets.symmetric(
         //     horizontal: 20,

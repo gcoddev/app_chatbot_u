@@ -55,22 +55,23 @@ class BlogCard extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 blog.titulo,
-                style: Theme.of(context).textTheme.bodyMedium,
-                maxLines: 2,
+                // style: Theme.of(context).textTheme.bodyMedium,
+                style: TextStyle(fontSize: 12.0),
+                maxLines: 3,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    blog.estado == '1' ? 'Activo' : 'Inactivo',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: kPrimaryColor,
-                    ),
-                  ),
-                ],
-              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: [
+              //     Text(
+              //       blog.estado == '1' ? 'Activo' : 'Inactivo',
+              //       style: const TextStyle(
+              //         fontSize: 14,
+              //         fontWeight: FontWeight.w600,
+              //         color: kPrimaryColor,
+              //       ),
+              //     ),
+              //   ],
+              // ),
             ],
           ),
         ));

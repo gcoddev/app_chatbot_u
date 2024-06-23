@@ -32,8 +32,11 @@ class _SpecialOffersState extends State<SpecialOffers> {
       final List<dynamic> responseData = json.decode(response.body);
       final List<Video> dataVideos =
           responseData.map((data) => Video.fromJson(data)).toList();
+
+      final List<Video> filteredVideos =
+          dataVideos.where((video) => video.estado == '1').toList();
       setState(() {
-        videos = dataVideos;
+        videos = filteredVideos;
       });
     } else {
       throw Exception('Failed to load videos');
@@ -138,7 +141,7 @@ class SpecialOfferCard extends StatelessWidget {
                         TextSpan(
                           text: "${video.titulo}\n",
                           style: const TextStyle(
-                            fontSize: 14,
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
