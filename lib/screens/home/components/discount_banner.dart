@@ -1,9 +1,31 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class DiscountBanner extends StatelessWidget {
-  const DiscountBanner({
-    Key? key,
-  }) : super(key: key);
+class DiscountBanner extends StatefulWidget {
+  const DiscountBanner({Key? key}) : super(key: key);
+
+  @override
+  _DiscountBannerState createState() => _DiscountBannerState();
+}
+
+class _DiscountBannerState extends State<DiscountBanner> {
+  String nombres = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String userDataString = prefs.getString('userData') ?? '{}';
+    Map<String, dynamic> userData = jsonDecode(userDataString);
+    setState(() {
+      nombres = userData['nombres'] ?? '';
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,13 +40,13 @@ class DiscountBanner extends StatelessWidget {
         color: const Color(0xFF4A3298),
         borderRadius: BorderRadius.circular(20),
       ),
-      child: const Text.rich(
+      child: Text.rich(
         TextSpan(
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
           children: [
             TextSpan(
-              text: "13+ documentos y\n15+ videos de ayuda",
-              style: TextStyle(
+              text: "Bienvenido/a ${nombres}",
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),

@@ -1,5 +1,5 @@
-import 'package:chatbot_u/models/ChatMessage.dart';
 import 'package:flutter/material.dart';
+import 'package:chatbot_u/models/ChatMessage.dart';
 
 import '../../../constants.dart';
 import 'audio_message.dart';
@@ -16,10 +16,10 @@ class Message extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget messageContaint(ChatMessage message) {
+    Widget messageContent(ChatMessage message) {
       switch (message.messageType) {
         case ChatMessageType.text:
-          return TextMessage(message: message);
+          return Flexible(child: TextMessage(message: message));
         case ChatMessageType.audio:
           return AudioMessage(message: message);
         case ChatMessageType.video:
@@ -42,7 +42,7 @@ class Message extends StatelessWidget {
             ),
             const SizedBox(width: kDefaultPadding / 2),
           ],
-          messageContaint(message),
+          messageContent(message),
           if (message.isSender) MessageStatusDot(status: message.messageStatus)
         ],
       ),
@@ -58,10 +58,6 @@ class MessageStatusDot extends StatelessWidget {
   Widget build(BuildContext context) {
     Color dotColor(MessageStatus status) {
       switch (status) {
-        case MessageStatus.not_sent:
-          return kErrorColor;
-        case MessageStatus.not_view:
-          return Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.1);
         case MessageStatus.viewed:
           return kPrimaryColor;
         default:
@@ -76,11 +72,6 @@ class MessageStatusDot extends StatelessWidget {
       decoration: BoxDecoration(
         color: dotColor(status!),
         shape: BoxShape.circle,
-      ),
-      child: Icon(
-        status == MessageStatus.not_sent ? Icons.close : Icons.done,
-        size: 8,
-        color: Theme.of(context).scaffoldBackgroundColor,
       ),
     );
   }

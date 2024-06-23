@@ -23,19 +23,18 @@ class _InitScreenState extends State<InitScreen> {
   int currentSelectedIndex = 0;
 
   void updateCurrentIndex(int index) {
-    setState(() {
-      currentSelectedIndex = index;
-    });
+    if (index != currentSelectedIndex) {
+      setState(() {
+        currentSelectedIndex = index;
+      });
+    }
   }
 
   final pages = [
     const HomeScreen(),
     const FavoriteScreen(),
-    // const Center(
-    //   child: Text("Chat"),
-    // ),
     const MessagesScreen(),
-    ProfileScreen()
+    const ProfileScreen(),
   ];
 
   @override
@@ -113,7 +112,7 @@ class _InitScreenState extends State<InitScreen> {
             );
           } else {
             // Si userData no existe, redirige a SignInScreen
-            WidgetsBinding.instance!.addPostFrameCallback((_) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
               Navigator.pushReplacementNamed(context, SignInScreen.routeName);
             });
 
