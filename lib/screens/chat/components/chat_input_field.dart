@@ -1,14 +1,13 @@
-// ChatInputField.dart
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../constants.dart';
 
 class ChatInputField extends StatefulWidget {
+  final Function(String) onSendMessage;
+
   const ChatInputField({
     Key? key,
+    required this.onSendMessage,
   }) : super(key: key);
 
   @override
@@ -58,7 +57,7 @@ class _ChatInputFieldState extends State<ChatInputField> {
                     Expanded(
                       child: TextField(
                         controller: messageController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           hintText: "Escriba su mensaje",
                           isDense: true,
                           border: InputBorder.none,
@@ -88,28 +87,11 @@ class _ChatInputFieldState extends State<ChatInputField> {
     );
   }
 
-  void sendMessage() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String userDataString = prefs.getString('userData') ?? '{}';
-    Map<String, dynamic> userData = jsonDecode(userDataString);
-    int userId = userData['id'];
-
+  void sendMessage() {
     String message = messageController.text.trim();
-    messageController.clear();
-    // Actualizar body
-    final url = 'http://192.168.0.10:3001/api/ask';
-    final response = await http.post(
-      Uri.parse(url),
-      body: {
-        "user_id": userId.toString(),
-        "user_question": message,
-      },
-    );
-
-    if (response.statusCode == 200) {
-      // Actualizar body
-    } else {
-      throw Exception('Failed to send message');
+    if (message.isNotEmpty) {
+      widget.onSendMessage(message);
+      messageController.clear();
     }
   }
 }
