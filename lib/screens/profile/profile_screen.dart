@@ -133,6 +133,9 @@ class ProfileScreen extends StatelessWidget {
   void signOut(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('userData');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Sesion cerrada con exito')),
+    );
     Navigator.pushNamedAndRemoveUntil(
       context,
       SignInScreen.routeName,

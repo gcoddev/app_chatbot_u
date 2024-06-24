@@ -22,9 +22,14 @@ const headingStyle = TextStyle(
 const defaultDuration = Duration(milliseconds: 250);
 
 // Form Error
-final RegExp emailValidatorRegExp = RegExp(r'^[a-zA-Z0-9]*$');
-const String kEmailNullError = "El usuario es obligatorio";
-const String kInvalidEmailError = "El usuario es invalido";
+final RegExp textWithSpacesValidatorRegExp = RegExp(r'^[a-zA-Z0-9 ]*$');
+final RegExp textWithoutSpacesValidatorRegExp = RegExp(r'^[a-zA-Z0-9]*$');
+final RegExp emailValidatorRegExp =
+    RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+const String kEmailNullError = "El correo es obligatorio";
+const String kInvalidEmailError = "El correo es invalido";
+const String kUsernameNullError = "El usuario es obligatorio";
+const String kInvalidUsernameError = "El usuario es invalido";
 const String kPassNullError = "Debe ingresar su contraseña";
 const String kShortPassError = "La contraseña es muy corta";
 const String kMatchPassError = "Las contraseñas no coinciden";
