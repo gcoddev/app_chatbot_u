@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../constants.dart';
 import '../models/Blog.dart';
+import 'package:chatbot_u/env.dart';
 
 class BlogCard extends StatelessWidget {
   const BlogCard({
@@ -33,7 +34,7 @@ class BlogCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Image.network(
-                    'http://192.168.0.12:3001/imagenes/${blog.imagen}',
+                    apiUrl + '/imagenes/${blog.imagen}',
                     fit: BoxFit.cover,
                     loadingBuilder: (context, child, loadingProgress) {
                       if (loadingProgress == null) return child;

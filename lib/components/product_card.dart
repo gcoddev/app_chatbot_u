@@ -4,6 +4,7 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../constants.dart';
 import '../models/Document.dart';
+import 'package:chatbot_u/env.dart';
 
 class ProductCard extends StatelessWidget {
   const ProductCard({
@@ -51,7 +52,7 @@ class ProductCard extends StatelessWidget {
       child: GestureDetector(
         onTap: () {
           _downloadPDF(
-              'http://192.168.0.12:3001/documentos/${document.documento}');
+              apiUrl + '/documentos/${document.documento}');
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,7 +68,7 @@ class ProductCard extends StatelessWidget {
                 child: PDF(
                   swipeHorizontal: false,
                 ).cachedFromUrl(
-                  'http://192.168.0.12:3001/documentos/${document.documento}',
+                  apiUrl + '/documentos/${document.documento}',
                   placeholder: (progress) =>
                       Center(child: CircularProgressIndicator(value: progress)),
                   errorWidget: (error) =>

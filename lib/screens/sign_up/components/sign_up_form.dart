@@ -7,6 +7,7 @@ import '../../../constants.dart';
 // import '../../complete_profile/complete_profile_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:chatbot_u/screens/sign_in/sign_in_screen.dart';
+import 'package:chatbot_u/env.dart';
 
 class SignUpForm extends StatefulWidget {
   const SignUpForm({Key? key}) : super(key: key);
@@ -67,7 +68,7 @@ class _SignUpFormState extends State<SignUpForm> {
 
       // Realizar la solicitud POST
       final response = await http.post(
-        Uri.parse('http://192.168.0.12:3001/api/usuariosApp'),
+        Uri.parse(apiUrl + '/api/usuariosApp'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(userData),
       );

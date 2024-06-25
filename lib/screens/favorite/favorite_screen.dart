@@ -6,6 +6,7 @@ import 'package:chatbot_u/components/product_card.dart';
 import 'package:chatbot_u/models/Product.dart';
 
 import '../details/details_screen.dart';
+import 'package:chatbot_u/env.dart';
 
 class FavoriteScreen extends StatefulWidget {
   const FavoriteScreen({Key? key}) : super(key: key);
@@ -26,7 +27,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
 
   Future<void> fetchData() async {
     final url =
-        'http://192.168.0.12:3001/api/documentosAll'; // Cambia la URL por la correcta
+        apiUrl + '/api/documentosAll'; // Cambia la URL por la correcta
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {

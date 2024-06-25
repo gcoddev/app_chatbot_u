@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'section_title.dart';
 import 'package:chatbot_u/models/Video.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:chatbot_u/env.dart';
 
 class SpecialOffers extends StatefulWidget {
   const SpecialOffers({
@@ -27,7 +28,7 @@ class _SpecialOffersState extends State<SpecialOffers> {
 
   Future<void> fetchVideos() async {
     final response =
-        await http.get(Uri.parse('http://192.168.0.12:3001/api/videosAll'));
+        await http.get(Uri.parse(apiUrl + '/api/videosAll'));
     if (response.statusCode == 200) {
       final List<dynamic> responseData = json.decode(response.body);
       final List<Video> dataVideos =
@@ -105,7 +106,7 @@ class SpecialOfferCard extends StatelessWidget {
       child: GestureDetector(
         onTap: press,
         child: SizedBox(
-          width: 135,
+          width: 130,
           height: 100,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),

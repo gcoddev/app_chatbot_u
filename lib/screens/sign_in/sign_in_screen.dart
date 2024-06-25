@@ -7,6 +7,7 @@ import '../../components/no_account_text.dart';
 // import '../../components/socal_card.dart';
 import 'components/sign_form.dart';
 import 'package:chatbot_u/screens/init_screen.dart';
+import 'package:chatbot_u/env.dart';
 
 class MyApp extends StatelessWidget {
   @override
@@ -73,13 +74,18 @@ class SignInScreen extends StatelessWidget {
 
   void verifyUser(BuildContext context) async {
     try {
-      final response = await http.get(Uri.parse('http://192.168.0.12:3001/api'));
+      final response = await http.get(Uri.parse(apiUrl + '/api'));
 
       if (response.statusCode == 200) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         bool isLoggedIn = prefs.containsKey('userData');
 
         if (isLoggedIn) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Iniciando sesion'),
+            ),
+          );
           Navigator.pushReplacementNamed(context, InitScreen.routeName);
         }
       } else {
@@ -92,7 +98,7 @@ class SignInScreen extends StatelessWidget {
 
   void showNoConnectionMessage(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         content: Text('No hay conexión con el servidor'),
       ),
     );

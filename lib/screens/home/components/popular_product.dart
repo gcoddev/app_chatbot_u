@@ -9,6 +9,7 @@ import '../../../models/Blog.dart';
 import '../../details/details_screen.dart';
 import '../../products/products_screen.dart';
 import 'section_title.dart';
+import 'package:chatbot_u/env.dart';
 
 class PopularProducts extends StatefulWidget {
   const PopularProducts({Key? key}) : super(key: key);
@@ -28,7 +29,7 @@ class _PopularProductsState extends State<PopularProducts> {
 
   Future<void> fetchBlogsAll() async {
     final response =
-        await http.get(Uri.parse('http://192.168.0.12:3001/api/blogsAll'));
+        await http.get(Uri.parse(apiUrl + '/api/blogsAll'));
     if (response.statusCode == 200) {
       final List<dynamic> responseData = json.decode(response.body);
       final List<Blog> dataBlogs =
