@@ -28,7 +28,7 @@ class _PopularProductsState extends State<PopularProducts> {
 
   Future<void> fetchBlogsAll() async {
     final response =
-        await http.get(Uri.parse('http://192.168.0.10:3001/api/blogsAll'));
+        await http.get(Uri.parse('http://192.168.0.12:3001/api/blogsAll'));
     if (response.statusCode == 200) {
       final List<dynamic> responseData = json.decode(response.body);
       final List<Blog> dataBlogs =

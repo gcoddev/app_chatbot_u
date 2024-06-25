@@ -9,7 +9,7 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  FlutterDownloader.initialize();
+  FlutterDownloader.initialize(debug: true);
 
   runApp(const MyApp());
 }

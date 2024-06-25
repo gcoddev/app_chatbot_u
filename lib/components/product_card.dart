@@ -19,21 +19,28 @@ class ProductCard extends StatelessWidget {
   final VoidCallback onPress;
 
   Future<void> _downloadPDF(String pdfUrl) async {
+    // Solicita permisos
     final status = await Permission.storage.request();
-    try {
-      if (status.isGranted) {
-        // ignore: unused_local_variable
+    if (status.isGranted) {
+      try {
+        // Inicializa FlutterDownloader
+        // WidgetsFlutterBinding.ensureInitialized();
+        // await FlutterDownloader.initialize(debug: true);
+
+        // Inicia la descarga
         final taskId = await FlutterDownloader.enqueue(
-            url: pdfUrl,
-            savedDir: '/storage/emulated/0/Download/',
-            fileName: '${document.titulo}.pdf',
-            showNotification: true,
-            openFileFromNotification: true);
-      } else {
-        print("Not permission to download");
+          url: pdfUrl,
+          savedDir: '/storage/emulated/0/Download/',
+          fileName: '${document.titulo}.pdf',
+          showNotification: true,
+          openFileFromNotification: true,
+        );
+        print("Download taskId: $taskId");
+      } catch (e) {
+        print("Error: $e");
       }
-    } catch (e) {
-      print("Error: ${e}");
+    } else {
+      print("Storage permission not granted");
     }
   }
 
@@ -44,7 +51,7 @@ class ProductCard extends StatelessWidget {
       child: GestureDetector(
         onTap: () {
           _downloadPDF(
-              'http://192.168.0.10:3001/documentos/${document.documento}');
+              'http://192.168.0.12:3001/documentos/${document.documento}');
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,7 +67,7 @@ class ProductCard extends StatelessWidget {
                 child: PDF(
                   swipeHorizontal: false,
                 ).cachedFromUrl(
-                  'http://192.168.0.10:3001/documentos/${document.documento}',
+                  'http://192.168.0.12:3001/documentos/${document.documento}',
                   placeholder: (progress) =>
                       Center(child: CircularProgressIndicator(value: progress)),
                   errorWidget: (error) =>
@@ -80,7 +87,7 @@ class ProductCard extends StatelessWidget {
               children: [
                 Text(
                   'Descargar',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     color: kPrimaryColor,

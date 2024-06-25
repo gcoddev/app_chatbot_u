@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'dart:io';
 
 import '../../components/no_account_text.dart';
 // import '../../components/socal_card.dart';
@@ -38,7 +40,7 @@ class SignInScreen extends StatelessWidget {
         child: SizedBox(
           width: double.infinity,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: EdgeInsets.symmetric(horizontal: 20),
             child: SingleChildScrollView(
               child: Column(
                 children: [
@@ -70,11 +72,29 @@ class SignInScreen extends StatelessWidget {
   }
 
   void verifyUser(BuildContext context) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool isLoggedIn = prefs.containsKey('userData');
+    try {
+      final response = await http.get(Uri.parse('http://192.168.0.12:3001/api'));
 
-    if (isLoggedIn) {
-      Navigator.pushReplacementNamed(context, InitScreen.routeName);
+      if (response.statusCode == 200) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        bool isLoggedIn = prefs.containsKey('userData');
+
+        if (isLoggedIn) {
+          Navigator.pushReplacementNamed(context, InitScreen.routeName);
+        }
+      } else {
+        showNoConnectionMessage(context);
+      }
+    } on SocketException {
+      showNoConnectionMessage(context);
     }
+  }
+
+  void showNoConnectionMessage(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('No hay conexión con el servidor'),
+      ),
+    );
   }
 }

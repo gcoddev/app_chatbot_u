@@ -67,7 +67,7 @@ class _SignUpFormState extends State<SignUpForm> {
 
       // Realizar la solicitud POST
       final response = await http.post(
-        Uri.parse('http://192.168.0.10:3001/api/usuariosApp'),
+        Uri.parse('http://192.168.0.12:3001/api/usuariosApp'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(userData),
       );

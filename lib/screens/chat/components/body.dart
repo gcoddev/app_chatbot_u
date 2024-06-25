@@ -49,7 +49,7 @@ class _BodyState extends State<Body> with WidgetsBindingObserver {
     Map<String, dynamic> userData = jsonDecode(userDataString);
     int userId = userData['id'];
 
-    final url = 'http://192.168.0.10:3001/api/chat/$userId';
+    final url = 'http://192.168.0.12:3001/api/chat/$userId';
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
@@ -77,7 +77,7 @@ class _BodyState extends State<Body> with WidgetsBindingObserver {
     String message = messageController.text.trim();
     messageController.clear();
     fetchChatMessages();
-    final url = 'http://192.168.0.10:3001/api/ask';
+    final url = 'http://192.168.0.12:3001/api/ask';
     final response = await http.post(
       Uri.parse(url),
       body: {

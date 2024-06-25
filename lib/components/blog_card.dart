@@ -33,7 +33,7 @@ class BlogCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Image.network(
-                    'http://192.168.0.10:3001/imagenes/${blog.imagen}',
+                    'http://192.168.0.12:3001/imagenes/${blog.imagen}',
                     fit: BoxFit.cover,
                     loadingBuilder: (context, child, loadingProgress) {
                       if (loadingProgress == null) return child;

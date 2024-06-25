@@ -27,7 +27,7 @@ class _SpecialOffersState extends State<SpecialOffers> {
 
   Future<void> fetchVideos() async {
     final response =
-        await http.get(Uri.parse('http://192.168.0.10:3001/api/videosAll'));
+        await http.get(Uri.parse('http://192.168.0.12:3001/api/videosAll'));
     if (response.statusCode == 200) {
       final List<dynamic> responseData = json.decode(response.body);
       final List<Video> dataVideos =
@@ -111,9 +111,15 @@ class SpecialOfferCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             child: Stack(
               children: [
-                Image.network(
-                  'https://img.youtube.com/vi/${obtenerCodigoVideo(video.url)}/0.jpg',
+                FadeInImage.assetNetwork(
+                  placeholder: 'assets/images/imagen_no_disponible.png',
+                  image:
+                      'https://img.youtube.com/vi/${obtenerCodigoVideo(video.url)}/0.jpg',
                   fit: BoxFit.cover,
+                  imageErrorBuilder: (context, error, stackTrace) {
+                    return Image.asset('assets/images/imagen_no_disponible.png',
+                        fit: BoxFit.cover);
+                  },
                 ),
                 Container(
                   decoration: const BoxDecoration(

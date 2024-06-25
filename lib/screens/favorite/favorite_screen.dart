@@ -26,7 +26,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
 
   Future<void> fetchData() async {
     final url =
-        'http://192.168.0.10:3001/api/documentosAll'; // Cambia la URL por la correcta
+        'http://192.168.0.12:3001/api/documentosAll'; // Cambia la URL por la correcta
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
